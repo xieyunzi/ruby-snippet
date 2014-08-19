@@ -1,5 +1,5 @@
 require 'sqlite3'
-require 'activerecord'
+require 'active_record'
 
 db_file = 'ok.db'
 db = SQLite3::Database.new db_file
