@@ -10,9 +10,6 @@ module Watir
       begin
         browser.screenshot.save(file)
         image = ChunkyPNG::Image.from_file(file)
-
-        puts image.width, image.height
-
         image.crop!(wd.location.x, wd.location.y, wd.size.width, wd.size.height)
         image.save(dest)
       ensure
@@ -27,15 +24,16 @@ module Watir
 end
 
 b = Watir::Browser.new :firefox
-#b.goto 'http://kaopubao.staging.bpct.co'
-#b.goto 'http://lofter.com'
+
 =begin
-5.times do |i|
+15.times do |i|
   b.goto "http://slides.com/dhanishsemarshahul/crobats-week-2#/#{i}"
-  b.screenshot.save("image#{i}.png")
+  b.div(:class => "reveal-frame").screenshot("slide#{i}.png")
 end
 =end
 
 b.goto 'http://so.com'
-b.body.so_size
 b.body.screenshot('so.png')
+
+b.goto 'http://baidu.com'
+b.body.screenshot('baidu.png')
