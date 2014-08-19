@@ -1,6 +1,9 @@
 require 'watir-webdriver'
 
 b = Watir::Browser.new :firefox
-#b.goto 'https://github.com/ansoni/watir-extensions-element-screenshot'
-b.goto 'http://oschina.net'
-b.screenshot.save("oschina.png")
+#b.goto 'http://kaopubao.staging.bpct.co'
+#b.goto 'http://lofter.com'
+5.times do |i|
+  b.goto "http://slides.com/dhanishsemarshahul/crobats-week-2#/#{i}"
+  b.screenshot.save("image#{i}.png")
+end
