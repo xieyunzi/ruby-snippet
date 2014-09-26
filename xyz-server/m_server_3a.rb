@@ -1,32 +1,32 @@
-require "socket"  
+require "socket"
 
 
-webserver = TCPServer.new('localhost', 2000)  
+webserver = TCPServer.new('localhost', 2000)
 base_dir = Dir.new(".")
-while (session = webserver.accept) 
+while (session = webserver.accept)
   request = session.gets
   puts request
   trimmedrequest = request.gsub(/GET\ \//, '').gsub(/\ HTTP.*/, '').chomp
   resource =  trimmedrequest
-  
+
   if resource == ""
     resource = "."
   end
   print resource
 
-  if !File.exists?(resource) 
+  if !File.exists?(resource)
     session.print "HTTP/1.1 404/Object Not Found\r\nServer Matteo\r\n\r\n"
     session.close
-    next 
+    next
   end
-  
+
   if File.directory?(resource)
     session.print "HTTP/1.1 200/OK\r\nContent-type:text/html\r\n\r\n"
     if resource == ""
       base_dir = Dir.new(".")
     else
       base_dir = Dir.new("./#{trimmedrequest}")
-    end    
+    end
     base_dir.entries.each do |f|
       dir_sign = ""
       base_path = resource + "/"
@@ -38,12 +38,12 @@ while (session = webserver.accept)
       if f == ".."
         upper_dir = base_path.split("/")[0..-2].join("/")
         session.print("<a href=\"/#{upper_dir}\">#{f}/</a></br>")
-      else  
+      else
         session.print("<a href=\"/#{resource_path}\">#{f}#{dir_sign}</a></br>")
       end
     end
   else
      ## return file
   end
-  session.close 
+  session.close
 end
