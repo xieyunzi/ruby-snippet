@@ -1,5 +1,1 @@
-#ruby-test
-ddddddd
-fffffffff
-eeeeeee
-ooooooooo
+# Ruby Snippet
