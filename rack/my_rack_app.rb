@@ -4,4 +4,4 @@ app = Proc.new do |env|
   ['200', {'Content-Type' => 'text/html'}, ['A barebones rack app.']]
 end
 
-Rack::Handler::WEBrick.run app
+Rack::Handler::WEBrick.run app, Host: '0.0.0.0'
