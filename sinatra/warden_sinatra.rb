@@ -93,7 +93,7 @@ builder = Rack::Builder.new do
   end
 
   use Rack::MethodOverride
-  use Rack::Session::Cookie
+  use Rack::Session::Cookie, secret: 'change_me'
   use Rack::Flash, accessorize: [:error, :success]
   use Warden::Manager do |config|
     config.scope_defaults :default,
@@ -111,7 +111,7 @@ builder = Rack::Builder.new do
   end
 end
 
-Rack::Handler::Thin.run builder
+Rack::Handler::Thin.run builder, Host: '0.0.0.0'
 
 __END__
 @@ layout
