@@ -3,14 +3,8 @@ require './eat'
 
 module Eat
   class TestPage < MiniTest::Test
-    class Eat::Page
-      def body
-        open('./oschina.net.txt')
-      end
-    end
-
     def setup
-      @page = Page.new('http://www.oschina.net', depth: 1)
+      @page = Page.new(URI('http://www.oschina.net'), depth: 1)
     end
 
     def test_links
@@ -36,12 +30,6 @@ module Eat
   class TestCore < MiniTest::Test
     def setup
       @core = Core.new('http://www.oschina.net', depth_limit: 1)
-    end
-
-    def test_fetch_page
-      url = @core.urls.first
-      page = @core.fetch_page(url, nil, 1)
-      assert_equal page.url.to_s, url.to_s
     end
   end
 end
