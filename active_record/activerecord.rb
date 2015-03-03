@@ -16,5 +16,5 @@ ActiveRecord::Base.establish_connection(
 
 class Post < ActiveRecord::Base
 end
-Post.craete name: 'name', password: 'password'
+Post.create name: 'name', password: 'password'
 =end
