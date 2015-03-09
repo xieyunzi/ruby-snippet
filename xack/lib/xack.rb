@@ -2,9 +2,9 @@ require 'logger'
 require 'thin'
 
 module Xack
-  class Server
-    LOGGER = Logger.new(STDOUT)
+  LOGGER = Logger.new(STDOUT)
 
+  class Server
     class << self
       def start
         new.start
@@ -15,16 +15,29 @@ module Xack
     end
 
     def start
-      LOGGER.info('start')
-      LOGGER.info(ARGV.first)
-      LOGGER.info(File.read(ARGV.first))
+      config = ARGV.first
 
-      app = eval "Builder.new { #{File.read(ARGV.first)} }.to_app"
+      app = Builder.parse_file(config)
       Thin::Server.start('0.0.0.0', 3000, app)
     end
   end
 
   class Builder
+    class << self
+      def parse_file(config)
+        LOGGER.info(config)
+
+        builder_script = File.read(config)
+        new_from_string(builder_script)
+      end
+
+      def new_from_string(builder_script)
+        LOGGER.info(builder_script)
+
+        eval "Builder.new { #{builder_script} }.to_app"
+      end
+    end
+
     def initialize(&block)
       instance_eval(&block) if block_given?
     end
