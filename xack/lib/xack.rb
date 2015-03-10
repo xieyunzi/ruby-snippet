@@ -38,7 +38,8 @@ module Xack
       end
     end
 
-    def initialize(&block)
+    def initialize(default_app = nil, &block)
+      @use, @map, @run = [], nil, default_app
       instance_eval(&block) if block_given?
     end
 
@@ -47,16 +48,50 @@ module Xack
     end
 
     def to_app
-      if @use.empty?
-        @run
-      else
-        @use.inject(@run) { |run, u| u.shift.new(run, *u) }
-      end
+      app = @map ? generate_map(@run, @map) : @run
+      @use.empty? ? app : @use.reverse.inject(app) { |run, u| u.shift.new(run, *u) }
     end
 
     def use(middle, *args)
       @use ||= []
       @use << [middle, *args]
+    end
+
+    def map(path, &block)
+      @map ||= {}
+      @map[path] = block
+    end
+
+    private
+    def generate_map(default_app, mapping)
+      mapped = default_app ? { '/' => default_app } : {}
+      mapping.each { |p, b| mapped[p] = self.class.new(default_app, &b).to_app }
+      URLMap.new(mapped)
+    end
+  end
+
+  class URLMap
+    def initialize(map = {})
+      @mapping = map
+    end
+
+    def call(env)
+      path = env['PATH_INFO']
+
+      @mapping.each do |location, app|
+        LOGGER.info({
+          script_name: env['SCRIPT_NAME'],
+          path_info: path,
+          location: location,
+          app: app.inspect
+        })
+        LOGGER.info(path == location)
+
+        return app.call(env) if path == location
+      end
+
+      LOGGER.info("path #{__LINE__}")
+      [404, { 'Content-Type' => 'text/plain', 'X-Cascade' => 'pass' }, [ "Not Found: #{path}"]]
     end
   end
 
