@@ -47,7 +47,16 @@ module Xack
     end
 
     def to_app
-      @run
+      if @use.empty?
+        @run
+      else
+        @use.inject(@run) { |run, u| u.shift.new(run, *u) }
+      end
+    end
+
+    def use(middle, *args)
+      @use ||= []
+      @use << [middle, *args]
     end
   end
 
